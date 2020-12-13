@@ -424,7 +424,8 @@ def writeMovementSummaries(e, labels, summary, useRecommendedImputation):
     """
 
     # Identify activity types to summarise
-git    activityTypes += labels
+    activityTypes = ['acc', 'CutPointMVPA', 'CutPointVPA']
+    activityTypes += labels
     if 'MET' in e.columns:
         activityTypes.append('MET')
 
