@@ -402,8 +402,8 @@ def calculateECDF(e, inputCol, summary, useRecommendedImputation, enhanced = Fal
 
     # And write to summary dict
     for x, ecdf in zip(ecdfXVals, accEcdf):
-            summary[inputCol + '-ecdf-' + str(accUtils.formatNum(x,0)) + 'mg'] = \
-                accUtils.formatNum(ecdf, 5)
+        summary[inputCol + '-ecdf-' + str(accUtils.formatNum(x,0)) + 'mg'] = \
+            accUtils.formatNum(ecdf, 5)
 
 
 

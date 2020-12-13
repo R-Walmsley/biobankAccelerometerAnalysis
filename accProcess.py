@@ -8,7 +8,7 @@ import datetime
 import accelerometer.device
 import json
 import os
-import accelerometer.summariseEpochEnhanced
+import accelerometer.summariseEpoch
 import pandas as pd
 import atexit
 import warnings
@@ -46,12 +46,12 @@ def main():
     parser.add_argument('--startTime',
                             metavar='e.g. 1991-01-01T23:59', default=None,
                             type=str2date, help="""removes data before this
-                            time in the final analysis
+                            time (local) in the final analysis
                             (default : %(default)s)""")
     parser.add_argument('--endTime',
                             metavar='e.g 1991-01-01T23:59', default=None,
                             type=str2date, help="""removes data after this
-                            time in the final analysis
+                            time (local) in the final analysis
                             (default : %(default)s)""")
     parser.add_argument('--timeSeriesDateColumn',
                             metavar='True/False', default=False, type=str2bool,
@@ -174,7 +174,7 @@ def main():
                             activity type
                             (default : %(default)s)""")
     parser.add_argument('--activityModel', type=str,
-                            default="activityModels/doherty-may20.tar",
+                            default="activityModels/walmsley-nov20.tar",
                             help="""trained activity model .tar file""")
 
     # circadian rhythm options
