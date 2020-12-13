@@ -18,7 +18,7 @@ def getActivitySummary(epochFile, nonWearFile, summary,
     epochPeriod=30, stationaryStd=13, minNonWearDuration=60,
     mgCutPointMVPA=100, mgCutPointVPA=425,
     activityModel="activityModels/walmsley-nov20.tar",
-    intensityDistribution=False, useRecommendedImputation=True,
+    intensityDistribution=False, intensityDistributionEnhanced = False, useRecommendedImputation=True,
     psd=False, fourierFrequency=False, fourierWithAcc=False, m10l5=False,
     verbose=False):
     """Calculate overall activity summary from <epochFile> data
@@ -140,7 +140,10 @@ def getActivitySummary(epochFile, nonWearFile, summary,
 
     # Calculate empirical cumulative distribution function of vector magnitudes
     if intensityDistribution:
-        calculateECDF(e, 'acc', summary, useRecommendedImputation)
+        if not intensityDistributionEnhanced:
+            calculateECDF(e, 'acc', summary, useRecommendedImputation, enhanced = False)
+    if intensityDistributionEnhanced: 
+        calculateECDF(e, 'acc', summary, useRecommendedImputation, enhanced = True)
 
     # Calculate circadian metrics
     if psd:
@@ -334,7 +337,7 @@ def perform_wearTime_imputation(e, verbose):
 
 
 
-def calculateECDF(e, inputCol, summary, useRecommendedImputation):
+def calculateECDF(e, inputCol, summary, useRecommendedImputation, enhanced = False):
     """Calculate activity intensity empirical cumulative distribution
 
     The input data must not be imputed, as ECDF requires different imputation
@@ -356,12 +359,17 @@ def calculateECDF(e, inputCol, summary, useRecommendedImputation):
     :return: Write dict <summary> keys '<inputCol>-ecdf-<level...>mg'
     :rtype: void
     """
-
-    ecdf1, step = np.linspace(1, 20, 20, retstep=True)  # 1mg bins from 1-20mg
-    ecdf2, step = np.linspace(25, 100, 16, retstep=True)  # 5mg bins from 25-100mg
-    ecdf3, step = np.linspace(125, 500, 16, retstep=True)  # 25mg bins from 125-500mg
-    ecdf4, step = np.linspace(600, 2000, 15, retstep=True)  # 100mg bins from 500-2000mg
-    ecdfXVals = np.concatenate([ecdf1, ecdf2, ecdf3, ecdf4])
+    if enhanced:
+        ecdf1, step = np.linspace(1, 100, 100, retstep=True)  # 1mg bins from 1-100mg
+        ecdf2, step = np.linspace(105, 500, 80, retstep=True)  # 5mg bins from 105-500mg
+        ecdf3, step = np.linspace(525, 2000, 60, retstep=True)  # 25mg bins from 125-500mg
+        ecdfXVals = np.concatenate([ecdf1, ecdf2, ecdf3])
+    else: 
+        ecdf1, step = np.linspace(1, 20, 20, retstep=True)  # 1mg bins from 1-20mg
+        ecdf2, step = np.linspace(25, 100, 16, retstep=True)  # 5mg bins from 25-100mg
+        ecdf3, step = np.linspace(125, 500, 16, retstep=True)  # 25mg bins from 125-500mg
+        ecdf4, step = np.linspace(600, 2000, 15, retstep=True)  # 100mg bins from 500-2000mg
+        ecdfXVals = np.concatenate([ecdf1, ecdf2, ecdf3, ecdf4])
 
     # Remove NaNs (necessary for statsmodels.api)
     ecdfData = e[['hour', 'minute', inputCol]][~np.isnan(e[inputCol])]
@@ -394,8 +402,9 @@ def calculateECDF(e, inputCol, summary, useRecommendedImputation):
 
     # And write to summary dict
     for x, ecdf in zip(ecdfXVals, accEcdf):
-        summary[inputCol + '-ecdf-' + str(accUtils.formatNum(x,0)) + 'mg'] = \
-            accUtils.formatNum(ecdf, 5)
+            summary[inputCol + '-ecdf-' + str(accUtils.formatNum(x,0)) + 'mg'] = \
+                accUtils.formatNum(ecdf, 5)
+
 
 
 
