@@ -8,7 +8,7 @@ import datetime
 import accelerometer.device
 import json
 import os
-import accelerometer.summariseEpoch
+import accelerometer.summariseEpochEnhanced
 import pandas as pd
 import atexit
 import warnings
@@ -46,12 +46,12 @@ def main():
     parser.add_argument('--startTime',
                             metavar='e.g. 1991-01-01T23:59', default=None,
                             type=str2date, help="""removes data before this
-                            time (local) in the final analysis
+                            time in the final analysis
                             (default : %(default)s)""")
     parser.add_argument('--endTime',
                             metavar='e.g 1991-01-01T23:59', default=None,
                             type=str2date, help="""removes data after this
-                            time (local) in the final analysis
+                            time in the final analysis
                             (default : %(default)s)""")
     parser.add_argument('--timeSeriesDateColumn',
                             metavar='True/False', default=False, type=str2bool,
@@ -158,6 +158,10 @@ def main():
                             metavar='True/False', default=False, type=str2bool,
                             help="""Save intensity distribution
                              (default : %(default)s)""")
+    parser.add_argument('--intensityDistributionEnhanced',
+                            metavar='True/False', default=False, type=str2bool,
+                            help="""Save intensity distribution
+                            (default : %(default)s)""")
     parser.add_argument('--useRecommendedImputation',
                             metavar='True/False', default=True, type=str2bool,
                             help="""Highly recommended method to impute missing
@@ -170,7 +174,7 @@ def main():
                             activity type
                             (default : %(default)s)""")
     parser.add_argument('--activityModel', type=str,
-                            default="activityModels/walmsley-nov20.tar",
+                            default="activityModels/doherty-may20.tar",
                             help="""trained activity model .tar file""")
 
     # circadian rhythm options
@@ -296,7 +300,7 @@ def main():
             f"Either folder '{path}' does not exist "
             "or you do not have write permission"
         )
-    if args.processInputFile: 
+    if args.processInputFile:
         assert os.access(args.epochFolder, os.W_OK), (
             f"Either folder '{args.epochFolder}' does not exist "
             "or you do not have write permission"
@@ -361,7 +365,7 @@ def main():
         endTime=args.endTime, epochPeriod=args.epochPeriod,
         stationaryStd=args.stationaryStd, mgCutPointMVPA=args.mgCutPointMVPA,
         mgCutPointVPA=args.mgCutPointVPA, activityModel=args.activityModel,
-        intensityDistribution=args.intensityDistribution,
+        intensityDistribution=args.intensityDistribution, intensityDistributionEnhanced = args.intensityDistributionEnhanced, 
         useRecommendedImputation=args.useRecommendedImputation,
         psd=args.psd, fourierFrequency=args.fourierFrequency,
         fourierWithAcc=args.fourierWithAcc, m10l5=args.m10l5,
