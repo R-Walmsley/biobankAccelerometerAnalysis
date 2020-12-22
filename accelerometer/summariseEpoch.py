@@ -414,8 +414,7 @@ def calculateECDF(e, inputCol, summary, useRecommendedImputation, intensityDistr
         summary[inputCol + '-ecdf-' + str(accUtils.formatNum(x,0)) + 'mg'] = \
             accUtils.formatNum(ecdf, 5)
 
-
-
+        
 
 def writeMovementSummaries(e, labels, summary, useRecommendedImputation):
     """Write overall summary stats for each activity type to summary dict
