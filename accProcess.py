@@ -158,9 +158,20 @@ def main():
                             metavar='True/False', default=False, type=str2bool,
                             help="""Save intensity distribution
                              (default : %(default)s)""")
-    parser.add_argument('--intensityDistributionEnhanced',
-                            metavar='True/False', default=False, type=str2bool,
-                            help="""Save intensity distribution
+    parser.add_argument('--intensityDistributionVals',
+                             metavar = "values of intensity distribution", default=[1.00e+00, 2.00e+00, 3.00e+00, 4.00e+00, 5.00e+00, 6.00e+00,
+       7.00e+00, 8.00e+00, 9.00e+00, 1.00e+01, 1.10e+01, 1.20e+01,
+       1.30e+01, 1.40e+01, 1.50e+01, 1.60e+01, 1.70e+01, 1.80e+01,
+       1.90e+01, 2.00e+01, 2.50e+01, 3.00e+01, 3.50e+01, 4.00e+01,
+       4.50e+01, 5.00e+01, 5.50e+01, 6.00e+01, 6.50e+01, 7.00e+01,
+       7.50e+01, 8.00e+01, 8.50e+01, 9.00e+01, 9.50e+01, 1.00e+02,
+       1.25e+02, 1.50e+02, 1.75e+02, 2.00e+02, 2.25e+02, 2.50e+02,
+       2.75e+02, 3.00e+02, 3.25e+02, 3.50e+02, 3.75e+02, 4.00e+02,
+       4.25e+02, 4.50e+02, 4.75e+02, 5.00e+02, 6.00e+02, 7.00e+02,
+       8.00e+02, 9.00e+02, 1.00e+03, 1.10e+03, 1.20e+03, 1.30e+03,
+       1.40e+03, 1.50e+03, 1.60e+03, 1.70e+03, 1.80e+03, 1.90e+03,
+       2.00e+03], type=float , nargs ='*',
+                            help="""Intensity distribution values
                             (default : %(default)s)""")
     parser.add_argument('--useRecommendedImputation',
                             metavar='True/False', default=True, type=str2bool,
@@ -365,7 +376,7 @@ def main():
         endTime=args.endTime, epochPeriod=args.epochPeriod,
         stationaryStd=args.stationaryStd, mgCutPointMVPA=args.mgCutPointMVPA,
         mgCutPointVPA=args.mgCutPointVPA, activityModel=args.activityModel,
-        intensityDistribution=args.intensityDistribution, intensityDistributionEnhanced = args.intensityDistributionEnhanced, 
+        intensityDistribution=args.intensityDistribution, intensityDistributionVals = args.intensityDistributionVals, 
         useRecommendedImputation=args.useRecommendedImputation,
         psd=args.psd, fourierFrequency=args.fourierFrequency,
         fourierWithAcc=args.fourierWithAcc, m10l5=args.m10l5,
