@@ -18,7 +18,18 @@ def getActivitySummary(epochFile, nonWearFile, summary,
     epochPeriod=30, stationaryStd=13, minNonWearDuration=60,
     mgCutPointMVPA=100, mgCutPointVPA=425,
     activityModel="activityModels/walmsley-nov20.tar",
-    intensityDistribution=False, intensityDistributionEnhanced = False, useRecommendedImputation=True,
+    intensityDistribution=False, intensityDistributionVals = [1.00e+00, 2.00e+00, 3.00e+00, 4.00e+00, 5.00e+00, 6.00e+00,
+       7.00e+00, 8.00e+00, 9.00e+00, 1.00e+01, 1.10e+01, 1.20e+01,
+       1.30e+01, 1.40e+01, 1.50e+01, 1.60e+01, 1.70e+01, 1.80e+01,
+       1.90e+01, 2.00e+01, 2.50e+01, 3.00e+01, 3.50e+01, 4.00e+01,
+       4.50e+01, 5.00e+01, 5.50e+01, 6.00e+01, 6.50e+01, 7.00e+01,
+       7.50e+01, 8.00e+01, 8.50e+01, 9.00e+01, 9.50e+01, 1.00e+02,
+       1.25e+02, 1.50e+02, 1.75e+02, 2.00e+02, 2.25e+02, 2.50e+02,
+       2.75e+02, 3.00e+02, 3.25e+02, 3.50e+02, 3.75e+02, 4.00e+02,
+       4.25e+02, 4.50e+02, 4.75e+02, 5.00e+02, 6.00e+02, 7.00e+02,
+       8.00e+02, 9.00e+02, 1.00e+03, 1.10e+03, 1.20e+03, 1.30e+03,
+       1.40e+03, 1.50e+03, 1.60e+03, 1.70e+03, 1.80e+03, 1.90e+03,
+       2.00e+03], useRecommendedImputation=True,
     psd=False, fourierFrequency=False, fourierWithAcc=False, m10l5=False,
     verbose=False):
     """Calculate overall activity summary from <epochFile> data
@@ -140,10 +151,7 @@ def getActivitySummary(epochFile, nonWearFile, summary,
 
     # Calculate empirical cumulative distribution function of vector magnitudes
     if intensityDistribution:
-        if not intensityDistributionEnhanced:
-            calculateECDF(e, 'acc', summary, useRecommendedImputation, enhanced = False)
-    if intensityDistributionEnhanced: 
-        calculateECDF(e, 'acc', summary, useRecommendedImputation, enhanced = True)
+        calculateECDF(e, 'acc', summary, useRecommendedImputation, intensityDistributionVals = intensityDistributionVals)
 
     # Calculate circadian metrics
     if psd:
@@ -337,7 +345,18 @@ def perform_wearTime_imputation(e, verbose):
 
 
 
-def calculateECDF(e, inputCol, summary, useRecommendedImputation, enhanced = False):
+def calculateECDF(e, inputCol, summary, useRecommendedImputation, intensityDistributionVals = [1.00e+00, 2.00e+00, 3.00e+00, 4.00e+00, 5.00e+00, 6.00e+00,
+       7.00e+00, 8.00e+00, 9.00e+00, 1.00e+01, 1.10e+01, 1.20e+01,
+       1.30e+01, 1.40e+01, 1.50e+01, 1.60e+01, 1.70e+01, 1.80e+01,
+       1.90e+01, 2.00e+01, 2.50e+01, 3.00e+01, 3.50e+01, 4.00e+01,
+       4.50e+01, 5.00e+01, 5.50e+01, 6.00e+01, 6.50e+01, 7.00e+01,
+       7.50e+01, 8.00e+01, 8.50e+01, 9.00e+01, 9.50e+01, 1.00e+02,
+       1.25e+02, 1.50e+02, 1.75e+02, 2.00e+02, 2.25e+02, 2.50e+02,
+       2.75e+02, 3.00e+02, 3.25e+02, 3.50e+02, 3.75e+02, 4.00e+02,
+       4.25e+02, 4.50e+02, 4.75e+02, 5.00e+02, 6.00e+02, 7.00e+02,
+       8.00e+02, 9.00e+02, 1.00e+03, 1.10e+03, 1.20e+03, 1.30e+03,
+       1.40e+03, 1.50e+03, 1.60e+03, 1.70e+03, 1.80e+03, 1.90e+03,
+       2.00e+03]):
     """Calculate activity intensity empirical cumulative distribution
 
     The input data must not be imputed, as ECDF requires different imputation
@@ -359,17 +378,7 @@ def calculateECDF(e, inputCol, summary, useRecommendedImputation, enhanced = Fal
     :return: Write dict <summary> keys '<inputCol>-ecdf-<level...>mg'
     :rtype: void
     """
-    if enhanced:
-        ecdf1, step = np.linspace(1, 100, 100, retstep=True)  # 1mg bins from 1-100mg
-        ecdf2, step = np.linspace(105, 500, 80, retstep=True)  # 5mg bins from 105-500mg
-        ecdf3, step = np.linspace(525, 2000, 60, retstep=True)  # 25mg bins from 125-500mg
-        ecdfXVals = np.concatenate([ecdf1, ecdf2, ecdf3])
-    else: 
-        ecdf1, step = np.linspace(1, 20, 20, retstep=True)  # 1mg bins from 1-20mg
-        ecdf2, step = np.linspace(25, 100, 16, retstep=True)  # 5mg bins from 25-100mg
-        ecdf3, step = np.linspace(125, 500, 16, retstep=True)  # 25mg bins from 125-500mg
-        ecdf4, step = np.linspace(600, 2000, 15, retstep=True)  # 100mg bins from 500-2000mg
-        ecdfXVals = np.concatenate([ecdf1, ecdf2, ecdf3, ecdf4])
+    ecdfXVals = intensityDistributionVals
 
     # Remove NaNs (necessary for statsmodels.api)
     ecdfData = e[['hour', 'minute', inputCol]][~np.isnan(e[inputCol])]
