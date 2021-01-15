@@ -6,7 +6,7 @@ import numpy as np
 import os
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-import sklearn.ensemble.forest as forest
+import sklearn.ensemble._forest as _forest
 import sklearn.metrics as metrics
 from sklearn.metrics import confusion_matrix
 import joblib
@@ -146,7 +146,7 @@ def trainClassificationModel(trainingFile,
     # First "monkeypatch" RF function to perform per-class balancing
     global MIN_TRAIN_CLASS_COUNT
     MIN_TRAIN_CLASS_COUNT = train[labelCol].value_counts().min()
-    forest._parallel_build_trees = _parallel_build_trees
+    _forest._parallel_build_trees = _parallel_build_trees
     # Then train RF model (which include per-class balancing)
     rfClassifier = RandomForestClassifier(n_estimators=rfTrees,
                                             n_jobs=rfThreads,
@@ -311,7 +311,7 @@ def viterbi(observations, states, priors, transitions, emissions,
 
 
 GLOBAL_INDICES = []
-def _parallel_build_trees(tree, forest, X, y, sample_weight, tree_idx, n_trees,
+def _parallel_build_trees(tree, _forest, X, y, sample_weight, tree_idx, n_trees,
                           verbose=0, class_weight=None):
     """Monkeypatch scikit learn to use per-class balancing
 
